@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="LifeTrack"/>
+<meta name="theme-color" content="#111318" id="theme-meta"/>
+<title>LifeTrack</title>
+
+<!-- Zero-flash theme -->
+<script>
+(function(){
+  var s=localStorage.getItem('lt_theme');
+  var sys=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+  document.documentElement.setAttribute('data-theme',s||sys);
+})();
+</script>
+
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Google+Sans+Display:wght@400;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+
+<style>
+/* ══════════════════════════════════════
+   THEME TOKENS
+══════════════════════════════════════ */
+:root[data-theme="dark"] {
+  --primary:#A8C8FF; --on-primary:#003063;
+  --pri-cont:#004890; --on-pri-cont:#D6E3FF;
+  --sec-cont:#3C4758; --on-sec-cont:#D8E3F8;
+  --ter-cont:#533580; --on-ter-cont:#EEDCFF;
+  --tertiary:#D9BAFF;
+  --error:#FFB4AB; --err-cont:#93000A; --on-err-cont:#FFDAD6;
+  --on-bg:#E2E2E9; --on-sv:#C3C7CF;
+  --outline:#8D9199; --out-var:#43474E;
+  --s0:#111318; --s1:#1A1F27; --s2:#1E2430; --s3:#232A38; --s4:#252C3B;
+  --snack:#2C3140;
+  --hero-bg:linear-gradient(145deg,#2D1B4E,#1A1230);
+  --hero-b:rgba(217,186,255,0.12);
+  --miss-txt:#EEDCFF; --miss-sub:rgba(238,220,255,0.50);
+  --cd-txt:#EEDCFF; --cd-bg:rgba(0,0,0,0.22);
+  --cd-sub:rgba(238,220,255,0.38); --cd-sep:rgba(217,186,255,0.28);
+  --bg-g1:rgba(168,200,255,0.10); --bg-g2:rgba(217,186,255,0.07);
+  --top-bg:rgba(17,19,24,0.92); --nav-bg:rgba(26,31,39,0.96);
+  --score-bg:#004890; --ring-track:rgba(0,72,144,0.35);
+  --food-home:#A8F5C0; --check-pass:#A8F5C0; --best-color:#A8F5C0;
+  --mg-success:#1A5C36; --mg-success-txt:#A8F5C0;
+  --mg-fail:#5C1A1A; --mg-fail-txt:#F5A8A8;
+  --mg-future:var(--s3); --mg-future-txt:var(--outline);
+  --today-glow:rgba(168,200,255,0.25);
+  --clean-color:#A8F5C0;
+}
+:root[data-theme="light"] {
+  --primary:#0055CC; --on-primary:#FFFFFF;
+  --pri-cont:#D6E3FF; --on-pri-cont:#001945;
+  --sec-cont:#D8E3F8; --on-sec-cont:#131C2B;
+  --ter-cont:#EEDCFF; --on-ter-cont:#230052;
+  --tertiary:#6B3FA0;
+  --error:#BA1A1A; --err-cont:#FFDAD6; --on-err-cont:#410002;
+  --on-bg:#1A1C22; --on-sv:#43474E;
+  --outline:#73777F; --out-var:#C3C7CF;
+  --s0:#F8F9FF; --s1:#FFFFFF; --s2:#F0F2FA; --s3:#E8EAF4; --s4:#E0E2EE;
+  --snack:#2C3140;
+  --hero-bg:linear-gradient(145deg,#EDE7FF,#F3EEFF);
+  --hero-b:rgba(107,63,160,0.15);
+  --miss-txt:#230052; --miss-sub:rgba(35,0,82,0.50);
+  --cd-txt:#230052; --cd-bg:rgba(107,63,160,0.08);
+  --cd-sub:rgba(35,0,82,0.40); --cd-sep:rgba(107,63,160,0.25);
+  --bg-g1:rgba(0,85,204,0.06); --bg-g2:rgba(107,63,160,0.04);
+  --top-bg:rgba(248,249,255,0.92); --nav-bg:rgba(240,242,250,0.96);
+  --score-bg:#D6E3FF; --ring-track:rgba(0,72,144,0.15);
+  --food-home:#1A5C36; --check-pass:#1A5C36; --best-color:#1A5C36;
+  --mg-success:#C8F5D8; --mg-success-txt:#1A5C36;
+  --mg-fail:#FFDAD6; --mg-fail-txt:#93000A;
+  --mg-future:var(--s3); --mg-future-txt:var(--outline);
+  --today-glow:rgba(0,85,204,0.20);
+  --clean-color:#1A5C36;
+}
+
+/* ══════════════════════════════════════
+   RESET
+══════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html{height:100%;overflow-x:hidden;}
+body{
+  background:var(--s0);color:var(--on-bg);
+  font-family:'Google Sans',sans-serif;
+  min-height:100dvh;overflow-x:hidden;padding-bottom:84px;
+  -webkit-font-smoothing:antialiased;
+  background-image:
+    radial-gradient(ellipse 90% 45% at 50% -10%,var(--bg-g1) 0%,transparent 60%),
+    radial-gradient(ellipse 55% 35% at 90% 85%,var(--bg-g2) 0%,transparent 55%);
+  background-attachment:fixed;
+  transition:background-color .3s ease,color .3s ease;
+}
+
+/* ══════════════════════════════════════
+   NAV BAR
+══════════════════════════════════════ */
+#nav-bar{
+  position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:var(--nav-bg);
+  backdrop-filter:blur(24px) saturate(160%);
+  -webkit-backdrop-filter:blur(24px) saturate(160%);
+  border-top:1px solid rgba(128,128,128,0.10);
+  display:flex;padding:0 8px max(12px,env(safe-area-inset-bottom)) 8px;gap:4px;
+}
+.nav-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  background:none;border:none;cursor:pointer;
+  padding:10px 4px 0;gap:3px;color:var(--outline);
+  font-family:'Google Sans',sans-serif;font-size:11px;font-weight:500;
+  transition:color .2s ease;
+}
+.nav-pill{
+  width:64px;height:32px;border-radius:999px;
+  display:flex;align-items:center;justify-content:center;font-size:20px;
+  transition:background .3s ease,transform .15s ease;will-change:transform,background;
+}
+.nav-item.active{color:var(--on-sec-cont);}
+.nav-item.active .nav-pill{background:var(--sec-cont);}
+.nav-item:active .nav-pill{transform:scale(0.90);}
+
+/* ══════════════════════════════════════
+   PAGES
+══════════════════════════════════════ */
+.page{display:none;}
+.page.active{display:block;animation:pg-in .28s cubic-bezier(0,0,0,1);}
+@keyframes pg-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ══════════════════════════════════════
+   TOP BAR
+══════════════════════════════════════ */
+.top-bar{
+  padding:52px 16px 12px;position:sticky;top:0;z-index:100;
+  background:var(--top-bg);
+  backdrop-filter:blur(20px) saturate(160%);
+  -webkit-backdrop-filter:blur(20px) saturate(160%);
+  border-bottom:1px solid rgba(128,128,128,0.08);
+  display:flex;align-items:flex-end;justify-content:space-between;
+  transition:background .3s ease;
+}
+.app-title{font-family:'Google Sans Display',sans-serif;font-size:30px;font-weight:700;letter-spacing:-.8px;color:var(--on-bg);line-height:1;}
+.app-title .accent{color:var(--primary);}
+.top-right{display:flex;align-items:center;gap:8px;margin-bottom:2px;}
+.date-chip{font-family:'Roboto Mono',monospace;font-size:11px;color:var(--on-sv);background:var(--s3);border:1px solid var(--out-var);padding:5px 12px;border-radius:999px;}
+.theme-btn{background:var(--s3);border:1px solid var(--out-var);border-radius:999px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;will-change:transform;transition:transform .15s ease;}
+.theme-btn:active{transform:scale(0.88);}
+
+/* ══════════════════════════════════════
+   SCORE HERO
+══════════════════════════════════════ */
+.score-hero{
+  margin:12px 16px 0;background:var(--score-bg);border-radius:36px;padding:22px 24px;
+  display:flex;align-items:center;gap:20px;
+  position:relative;overflow:hidden;
+  box-shadow:0 2px 12px rgba(0,0,0,0.20);
+  transition:background .3s ease;
+}
+.score-hero::before{content:'';position:absolute;width:200px;height:200px;border-radius:50%;background:rgba(168,200,255,0.07);top:-65px;right:-45px;pointer-events:none;}
+.ring-wrap{flex-shrink:0;width:90px;height:90px;position:relative;filter:drop-shadow(0 2px 10px rgba(0,48,99,0.3));}
+.ring-wrap svg{width:90px;height:90px;transform:rotate(-90deg);}
+.ring-wrap circle{fill:none;stroke-width:8;stroke-linecap:round;}
+.ring-track{stroke:var(--ring-track);}
+.ring-fill{stroke:var(--primary);stroke-dasharray:226.19;stroke-dashoffset:226.19;transition:stroke-dashoffset .5s cubic-bezier(0,0,0,1),stroke .4s ease;}
+.ring-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Google Sans Display',sans-serif;font-size:26px;font-weight:700;color:var(--on-pri-cont);}
+.score-info{flex:1;min-width:0;}
+.score-grade{font-family:'Google Sans Display',sans-serif;font-size:21px;font-weight:700;color:var(--on-pri-cont);letter-spacing:-.3px;}
+.score-msg{font-size:12px;font-weight:600;color:rgba(214,227,255,0.70);margin-top:3px;}
+[data-theme="light"] .score-msg{color:rgba(0,25,69,0.55);}
+.penalty-wrap{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px;}
+.p-chip{font-family:'Roboto Mono',monospace;font-size:10px;background:rgba(255,100,90,0.15);color:var(--error);border:1px solid rgba(255,100,90,0.22);padding:3px 9px;border-radius:999px;}
+[data-theme="light"] .p-chip{background:rgba(186,26,26,0.10);border-color:rgba(186,26,26,0.20);}
+.ok-chip{font-size:12px;font-weight:600;color:var(--best-color);margin-top:6px;display:block;}
+
+/* ══════════════════════════════════════
+   SECTION HEADING
+══════════════════════════════════════ */
+.sec-h{padding:20px 16px 8px;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--primary);display:flex;align-items:center;justify-content:space-between;}
+.sec-badge{font-family:'Roboto Mono',monospace;font-size:10px;font-weight:500;background:var(--sec-cont);color:var(--on-sec-cont);padding:2px 9px;border-radius:999px;margin-right:16px;}
+
+/* ══════════════════════════════════════
+   CARDS
+══════════════════════════════════════ */
+.card{margin:0 16px 12px;background:var(--s1);border:1px solid rgba(128,128,128,0.10);border-radius:28px;padding:20px;transition:background .3s ease;}
+.big-val{font-family:'Google Sans Display',sans-serif;font-size:44px;font-weight:700;letter-spacing:-2px;color:var(--on-bg);line-height:1;margin-bottom:16px;}
+.big-val .u{font-size:16px;font-weight:500;letter-spacing:0;color:var(--outline);margin-left:3px;}
+
+/* ══════════════════════════════════════
+   BUTTONS
+══════════════════════════════════════ */
+.btn-row{display:flex;gap:8px;}
+.btn-f{flex:1;padding:13px 8px;background:var(--primary);color:var(--on-primary);border:none;border-radius:999px;font-family:'Google Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;text-align:center;will-change:transform;transition:transform .12s ease,box-shadow .12s ease;box-shadow:0 1px 3px rgba(0,0,0,0.2);}
+.btn-f:active{transform:scale(0.93);box-shadow:none;}
+.btn-t{flex:1;padding:13px 8px;background:var(--sec-cont);color:var(--on-sec-cont);border:none;border-radius:999px;font-family:'Google Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;text-align:center;will-change:transform;transition:transform .12s ease;}
+.btn-t:active{transform:scale(0.93);}
+.btn-o{flex:1;padding:13px 8px;background:transparent;border:1.5px solid var(--outline);color:var(--primary);border-radius:999px;font-family:'Google Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;text-align:center;will-change:transform;transition:transform .12s ease,background .2s ease;}
+.btn-o:active{transform:scale(0.93);background:rgba(128,128,128,0.10);}
+.btn-e{flex:1;padding:13px 8px;background:var(--err-cont);color:var(--on-err-cont);border:none;border-radius:999px;font-family:'Google Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;text-align:center;will-change:transform;transition:transform .12s ease;}
+.btn-e:active{transform:scale(0.93);}
+.btn-ic{width:48px;height:48px;flex-shrink:0;background:var(--s3);border:none;border-radius:999px;color:var(--on-bg);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;will-change:transform;transition:transform .12s ease,background .2s ease;}
+.btn-ic:active{transform:scale(0.88);background:var(--s4);}
+.seg{display:flex;gap:6px;}
+.seg-b{flex:1;padding:11px 6px;background:var(--s3);border:none;border-radius:999px;color:var(--on-sv);font-family:'Google Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;text-align:center;will-change:transform;transition:background .2s ease,color .2s ease,transform .12s ease;}
+.seg-b:active{transform:scale(0.93);}
+.seg-b.active{background:var(--sec-cont);color:var(--on-sec-cont);}
+.seg-b.good.active{background:#1A4030;color:#A8F5C0;}
+.seg-b.bad.active{background:var(--err-cont);color:var(--on-err-cont);}
+.seg-b.high.active{background:#1A3D4A;color:#A8E6FF;}
+.seg-b.low.active{background:var(--err-cont);color:var(--on-err-cont);}
+[data-theme="light"] .seg-b.good.active{background:#C8F5D8;color:#1A5C36;}
+[data-theme="light"] .seg-b.high.active{background:#C8E8F5;color:#1A3D5C;}
+.fab{display:flex;align-items:center;justify-content:center;gap:10px;width:calc(100% - 32px);margin:12px 16px 0;padding:18px;background:var(--ter-cont);color:var(--on-ter-cont);border:none;border-radius:28px;font-family:'Google Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:-.2px;box-shadow:0 1px 3px rgba(0,0,0,0.2),0 4px 8px rgba(0,0,0,0.1);will-change:transform;transition:transform .12s ease,box-shadow .12s ease;}
+.fab:active{transform:scale(0.97);box-shadow:0 1px 2px rgba(0,0,0,0.2);}
+.fab .fi{font-size:22px;}
+.reset-btn{display:block;width:calc(100% - 32px);margin:4px 16px 0;padding:14px;background:transparent;border:1.5px solid var(--out-var);border-radius:999px;color:var(--on-sv);font-family:'Google Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;text-align:center;will-change:transform;transition:border-color .2s,color .2s,transform .12s ease;}
+.reset-btn:active{border-color:var(--error);color:var(--error);transform:scale(0.98);}
+
+/* ══════════════════════════════════════
+   SLEEP ROW
+══════════════════════════════════════ */
+.sleep-row{display:flex;align-items:center;gap:10px;}
+.sleep-wrap{flex:1;background:var(--s3);border:1.5px solid var(--out-var);border-radius:16px;padding:12px 16px;display:flex;align-items:center;gap:8px;transition:border-color .2s ease,background .3s ease;}
+.sleep-wrap:focus-within{border-color:var(--primary);}
+.sleep-wrap input{flex:1;background:none;border:none;outline:none;color:var(--on-bg);font-family:'Roboto Mono',monospace;font-size:22px;font-weight:500;-webkit-appearance:none;}
+.sleep-wrap input::placeholder{color:var(--outline);}
+.sleep-u{font-size:12px;color:var(--outline);font-weight:600;}
+
+/* ══════════════════════════════════════
+   SLEEP DISPLAY
+══════════════════════════════════════ */
+.sleep-display{font-family:'Google Sans Display',sans-serif;font-size:44px;font-weight:700;letter-spacing:-2px;color:var(--on-bg);line-height:1;margin-bottom:12px;}
+.sleep-display .u{font-size:16px;font-weight:500;letter-spacing:0;color:var(--outline);margin-left:3px;}
+.sleep-display.good{color:var(--clean-color);}
+.sleep-display.warn{color:#FFD97D;}
+.sleep-display.bad{color:var(--error);}
+
+/* ══════════════════════════════════════
+   ADDICTIONS
+══════════════════════════════════════ */
+.addict-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.addict-tile{background:var(--s2);border:1px solid rgba(128,128,128,0.08);border-radius:28px;padding:16px;transition:background .3s ease,border-color .3s ease;}
+.addict-tile.clean-tile{border-color:rgba(168,245,192,0.20);}
+[data-theme="light"] .addict-tile.clean-tile{border-color:rgba(26,92,54,0.20);}
+.addict-lbl{font-size:11px;font-weight:700;letter-spacing:.4px;color:var(--on-sv);text-transform:uppercase;margin-bottom:8px;}
+.addict-count{font-family:'Google Sans Display',sans-serif;font-size:38px;font-weight:700;letter-spacing:-1.5px;line-height:1;margin-bottom:12px;color:var(--on-bg);transition:color .3s ease;}
+.addict-count.warn{color:var(--tertiary);}
+.addict-count.clean{color:var(--clean-color);}
+
+/* ══════════════════════════════════════
+   FOOD
+══════════════════════════════════════ */
+.food-item{display:flex;align-items:center;gap:10px;background:var(--s2);border-radius:16px;padding:10px 14px;margin-bottom:6px;}
+.food-time{font-family:'Roboto Mono',monospace;font-size:12px;color:var(--on-sv);flex-shrink:0;}
+.food-type{flex:1;font-size:13px;font-weight:700;}
+.food-type.home{color:var(--food-home);}
+.food-type.outside{color:var(--tertiary);}
+.food-del{background:none;border:none;color:var(--outline);font-size:18px;cursor:pointer;padding:2px 6px;line-height:1;}
+.food-add{display:flex;gap:8px;margin-top:10px;}
+.food-ti{flex:1;background:var(--s3);border:1.5px solid var(--out-var);border-radius:16px;color:var(--on-bg);font-family:'Roboto Mono',monospace;font-size:14px;padding:11px 14px;outline:none;transition:border-color .2s ease;}
+.food-ti:focus{border-color:var(--primary);}
+.food-empty{font-family:'Roboto Mono',monospace;font-size:11px;color:var(--outline);margin-bottom:10px;}
+
+/* ══════════════════════════════════════
+   MISSION HERO
+══════════════════════════════════════ */
+.mission-hero{margin:12px 16px 0;background:var(--hero-bg);border-radius:36px;padding:24px;border:1px solid var(--hero-b);position:relative;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.15);transition:background .3s ease;}
+.mission-hero::before{content:'';position:absolute;width:200px;height:200px;border-radius:50%;background:rgba(168,85,247,0.05);top:-60px;right:-40px;pointer-events:none;}
+.m-badge-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.m-ico{font-size:26px;line-height:1;}
+.m-title{font-family:'Google Sans Display',sans-serif;font-size:20px;font-weight:700;flex:1;color:var(--miss-txt);}
+.m-badge{font-family:'Roboto Mono',monospace;font-size:10px;font-weight:500;padding:4px 12px;border-radius:999px;background:rgba(168,85,247,0.12);border:1px solid rgba(168,85,247,0.22);color:var(--tertiary);}
+.m-badge.ab{background:rgba(52,199,89,0.12);border-color:rgba(52,199,89,0.22);color:#34C759;}
+.m-badge.db{background:rgba(52,199,89,0.15);border-color:rgba(52,199,89,0.28);color:#34C759;}
+.m-badge.wb{background:rgba(0,85,204,0.12);border-color:rgba(0,85,204,0.22);color:var(--primary);}
+.m-day{font-family:'Google Sans Display',sans-serif;font-size:52px;font-weight:700;letter-spacing:-2.5px;color:var(--miss-txt);line-height:1;margin-bottom:4px;}
+.m-day span{font-size:20px;font-weight:500;opacity:.40;letter-spacing:0;}
+.m-sub{font-size:12px;color:var(--miss-sub);font-weight:500;margin-bottom:16px;}
+.m-prog-track{height:8px;background:rgba(168,85,247,0.12);border-radius:999px;overflow:hidden;margin-bottom:20px;}
+.m-prog-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#A855F7,#D9BAFF);box-shadow:0 0 10px rgba(168,85,247,0.35);transition:width .4s cubic-bezier(0,0,0,1);}
+.m-prog-fill.done{background:linear-gradient(90deg,#34C759,#A8F5C0);box-shadow:0 0 10px rgba(52,199,89,0.35);}
+.m-cd{display:flex;align-items:center;justify-content:space-between;background:var(--cd-bg);border-radius:20px;padding:16px 10px;gap:4px;}
+.m-cd-block{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.m-cd-num{font-family:'Roboto Mono',monospace;font-size:26px;font-weight:500;color:var(--cd-txt);line-height:1;will-change:transform,opacity;transition:opacity .1s ease,transform .1s ease;}
+.m-cd-lbl{font-family:'Roboto Mono',monospace;font-size:9px;color:var(--cd-sub);text-transform:uppercase;letter-spacing:1px;}
+.m-cd-sep{font-size:22px;color:var(--cd-sep);padding-bottom:18px;font-weight:300;flex-shrink:0;}
+
+/* ══════════════════════════════════════
+   MISSION STATS + CHECKS
+══════════════════════════════════════ */
+.m-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 16px 0;}
+.m-stat{background:var(--s1);border:1px solid rgba(128,128,128,0.08);border-radius:28px;padding:16px;text-align:center;transition:background .3s ease;}
+.m-stat-val{font-family:'Google Sans Display',sans-serif;font-size:26px;font-weight:700;letter-spacing:-1px;color:var(--on-bg);}
+.m-stat-lbl{font-size:10px;font-weight:700;color:var(--on-sv);text-transform:uppercase;letter-spacing:.4px;margin-top:4px;}
+.checks{display:flex;flex-direction:column;gap:8px;}
+.check-row{display:flex;align-items:center;gap:10px;background:var(--s2);border-radius:16px;padding:12px 14px;transition:background .3s ease;}
+.ck-ico{font-size:18px;flex-shrink:0;}
+.ck-lbl{flex:1;font-size:13px;font-weight:600;color:var(--on-bg);}
+.ck-st{font-family:'Roboto Mono',monospace;font-size:11px;font-weight:500;}
+.ck-st.pass{color:var(--check-pass);}
+.ck-st.fail{color:var(--error);}
+
+/* ══════════════════════════════════════
+   MISSION GRID
+══════════════════════════════════════ */
+#mission-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;}
+.mg-box{aspect-ratio:1;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;will-change:transform;transition:transform .12s ease;position:relative;}
+.mg-box:active{transform:scale(0.90);animation-play-state:paused;}
+.mg-box.success{background:var(--mg-success);color:var(--mg-success-txt);font-size:17px;animation:mg-pop .35s cubic-bezier(0.34,1.56,0.64,1) both;}
+@keyframes mg-pop{0%{transform:scale(0.55);opacity:0;}100%{transform:scale(1);opacity:1;}}
+.mg-box.fail{background:var(--mg-fail);color:var(--mg-fail-txt);font-size:17px;}
+.mg-box.future{background:var(--mg-future);color:var(--mg-future-txt);}
+.mg-box.today{box-shadow:0 0 0 2.5px var(--s1),0 0 0 4.5px var(--primary);animation:today-pulse 2s ease-in-out infinite;}
+.mg-box.success.today{animation:mg-pop .35s cubic-bezier(0.34,1.56,0.64,1) both,today-pulse 2s ease-in-out .35s infinite;}
+@keyframes today-pulse{
+  0%,100%{box-shadow:0 0 0 2.5px var(--s1),0 0 0 4.5px var(--primary);}
+  50%{box-shadow:0 0 0 2.5px var(--s1),0 0 0 4.5px var(--primary),0 0 10px 5px var(--today-glow);}
+}
+
+/* ══════════════════════════════════════
+   WEEK BOXES (Weekly page)
+══════════════════════════════════════ */
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;}
+.week-labels{display:grid;grid-template-columns:repeat(7,1fr);margin-top:8px;font-family:'Roboto Mono',monospace;font-size:9px;text-align:center;color:var(--outline);letter-spacing:.3px;text-transform:uppercase;}
+
+/* ══════════════════════════════════════
+   WEEKLY
+══════════════════════════════════════ */
+.w-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 16px 12px;}
+.w-tile{background:var(--s1);border:1px solid rgba(128,128,128,0.08);border-radius:28px;padding:18px;transition:background .3s ease;}
+.w-val{font-family:'Google Sans Display',sans-serif;font-size:30px;font-weight:700;letter-spacing:-1px;color:var(--on-bg);}
+.w-lbl{font-size:11px;font-weight:700;color:var(--on-sv);text-transform:uppercase;letter-spacing:.4px;margin-top:6px;}
+.bw-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 16px 12px;}
+.bw-tile{background:var(--s1);border:1px solid rgba(128,128,128,0.08);border-radius:28px;padding:16px;transition:background .3s ease;}
+.bw-lbl{font-size:11px;font-weight:700;color:var(--on-sv);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px;}
+.bw-score{font-family:'Google Sans Display',sans-serif;font-size:30px;font-weight:700;letter-spacing:-1px;}
+.bw-date{font-family:'Roboto Mono',monospace;font-size:10px;color:var(--outline);margin-top:4px;}
+.insight{margin:0 16px 8px;background:var(--s1);border:1px solid rgba(128,128,128,0.08);border-radius:28px;padding:14px 16px;font-size:13px;font-weight:600;line-height:1.5;color:var(--on-bg);transition:background .3s ease;}
+
+/* ══════════════════════════════════════
+   SETTINGS
+══════════════════════════════════════ */
+.setting-row{margin:0 16px 10px;background:var(--s1);border:1px solid rgba(128,128,128,0.08);border-radius:20px;padding:16px 18px;display:flex;align-items:center;gap:14px;transition:background .3s ease;}
+.setting-ico{font-size:22px;flex-shrink:0;}
+.setting-info{flex:1;}
+.setting-title{font-size:14px;font-weight:700;color:var(--on-bg);}
+.setting-sub{font-size:11px;color:var(--on-sv);margin-top:2px;}
+
+/* ══════════════════════════════════════
+   INSTALL BANNER
+══════════════════════════════════════ */
+#install-bar{
+  display:none;position:fixed;top:0;left:0;right:0;z-index:999;
+  background:#004890;color:#D6E3FF;
+  padding:12px 16px;
+  align-items:center;justify-content:space-between;
+  font-family:'Google Sans',sans-serif;font-size:13px;font-weight:700;
+  box-shadow:0 2px 8px rgba(0,0,0,0.3);
+}
+
+/* ══════════════════════════════════════
+   SNACKBAR
+══════════════════════════════════════ */
+#snack{position:fixed;bottom:92px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--snack);color:#E2E2E9;font-size:13px;font-weight:600;padding:12px 20px;border-radius:12px;opacity:0;pointer-events:none;z-index:300;white-space:nowrap;box-shadow:0 4px 14px rgba(0,0,0,0.40);transition:opacity .2s ease,transform .2s ease;}
+#snack.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.sp{height:8px;}
+</style>
+</head>
+<body>
+
+<!-- Install Banner -->
+<div id="install-bar">
+  <span>📲 Install LifeTrack as app</span>
+  <div style="display:flex;gap:8px;">
+    <button onclick="installApp()" style="background:#A8C8FF;color:#003063;border:none;border-radius:999px;padding:8px 16px;font-family:'Google Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">Install</button>
+    <button onclick="dismissInstall()" style="background:rgba(255,255,255,0.15);color:#D6E3FF;border:none;border-radius:999px;padding:8px 12px;font-family:'Google Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">✕</button>
+  </div>
+</div>
+
+<div id="snack"></div>
+<input type="file" id="import-input" accept=".json" style="display:none" onchange="importData(this.files[0]);this.value=''"/>
+
+<!-- ══════════════ PAGE: TODAY ══════════════ -->
+<div class="page active" id="page-today">
+  <div class="top-bar">
+    <div class="app-title">Life<span class="accent">Track</span></div>
+    <div class="top-right">
+      <div class="date-chip" id="date-label"></div>
+      <button class="theme-btn" onclick="toggleTheme()" aria-label="Toggle theme">🌙</button>
+    </div>
+  </div>
+
+  <!-- Score -->
+  <div class="score-hero">
+    <div class="ring-wrap">
+      <svg viewBox="0 0 90 90">
+        <circle class="ring-track" cx="45" cy="45" r="36"/>
+        <circle class="ring-fill"  cx="45" cy="45" r="36" stroke-dasharray="226.19" stroke-dashoffset="226.19"/>
+      </svg>
+      <div class="ring-num" id="score-num">—</div>
+    </div>
+    <div class="score-info">
+      <div class="score-grade" id="score-grade">—</div>
+      <div class="score-msg"   id="score-msg"></div>
+      <div class="penalty-wrap" id="score-penalties"></div>
+    </div>
+  </div>
+
+  <!-- Water -->
+  <div class="sec-h">💧 Water</div>
+  <div class="card">
+    <div class="big-val" id="water-val">0<span class="u">L</span></div>
+    <div class="btn-row">
+      <button class="btn-f" onclick="addWater(0.25)">+250ml</button>
+      <button class="btn-f" onclick="addWater(0.5)">+500ml</button>
+      <button class="btn-f" onclick="addWater(1)">+1L</button>
+      <button class="btn-e" onclick="addWater(-0.25)">−</button>
+    </div>
+  </div>
+
+  <!-- Toilet -->
+  <div class="sec-h">🚽 Toilet</div>
+  <div class="card">
+    <div class="big-val" id="toilet-val">0<span class="u">×</span></div>
+    <div class="btn-row">
+      <button class="btn-f" onclick="addToilet(1)">+1</button>
+      <button class="btn-o" onclick="addToilet(-1)">−1</button>
+    </div>
+  </div>
+
+  <!-- Sleep -->
+  <div class="sec-h">🌙 Sleep</div>
+  <div class="card">
+    <div class="sleep-display" id="sleep-display">0<span class="u">hrs</span></div>
+    <div class="sleep-row">
+      <button class="btn-ic" onclick="changeSleep(-0.5)">−</button>
+      <div class="sleep-wrap">
+        <input id="sleep-input" type="number" min="0" max="24" step="0.5" placeholder="0" inputmode="decimal"/>
+        <span class="sleep-u">hrs</span>
+      </div>
+      <button class="btn-ic" onclick="changeSleep(0.5)">+</button>
+    </div>
+  </div>
+
+  <!-- Mood -->
+  <div class="sec-h">😊 Mood</div>
+  <div class="card">
+    <div class="seg">
+      <button class="seg-b good"   id="mood-good"   onclick="setMood('good')">😊 Good</button>
+      <button class="seg-b"        id="mood-normal" onclick="setMood('normal')">😐 Normal</button>
+      <button class="seg-b bad"    id="mood-bad"    onclick="setMood('bad')">😞 Bad</button>
+    </div>
+  </div>
+
+  <!-- Energy -->
+  <div class="sec-h">⚡ Energy</div>
+  <div class="card">
+    <div class="seg">
+      <button class="seg-b high" id="energy-high"   onclick="setEnergy('high')">🔥 High</button>
+      <button class="seg-b"      id="energy-normal" onclick="setEnergy('normal')">⚡ Normal</button>
+      <button class="seg-b low"  id="energy-low"    onclick="setEnergy('low')">🪫 Low</button>
+    </div>
+  </div>
+
+  <!-- Addictions -->
+  <div class="sec-h">⚠️ Addictions</div>
+  <div class="card">
+    <div class="addict-grid">
+      <div class="addict-tile" id="tambaku-tile">
+        <div class="addict-lbl">Tambaku</div>
+        <div class="addict-count" id="tambaku-val">0</div>
+        <div class="btn-row">
+          <button class="btn-t" onclick="addAddiction('tambaku',1)">+1</button>
+          <button class="btn-e" onclick="addAddiction('tambaku',-1)">−</button>
+        </div>
+      </div>
+      <div class="addict-tile" id="bhang-tile">
+        <div class="addict-lbl">Bhang</div>
+        <div class="addict-count" id="bhang-val">0</div>
+        <div class="btn-row">
+          <button class="btn-t" onclick="addAddiction('bhang',1)">+1</button>
+          <button class="btn-e" onclick="addAddiction('bhang',-1)">−</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Food -->
+  <div class="sec-h" id="food-sec-h">
+    <span>🍽️ Food Log</span>
+    <span class="sec-badge" id="food-badge" style="display:none;"></span>
+  </div>
+  <div class="card">
+    <div id="food-list"></div>
+    <div class="food-add">
+      <input class="food-ti" id="food-time" type="time"/>
+      <button class="btn-t" style="flex:0 0 auto;padding:11px 14px;" onclick="logFood('home')">🏠</button>
+      <button class="btn-o" style="flex:0 0 auto;padding:11px 14px;" onclick="logFood('outside')">🌍</button>
+    </div>
+  </div>
+
+  <button class="reset-btn" onclick="resetDay()">↺ Reset Today</button>
+  <div class="sp"></div>
+</div>
+
+<!-- ══════════════ PAGE: MISSION ══════════════ -->
+<div class="page" id="page-mission">
+  <div class="top-bar">
+    <div class="app-title">🔥 <span class="accent">Mission</span></div>
+    <div class="top-right">
+      <div class="date-chip">30 Days</div>
+      <button class="theme-btn" onclick="toggleTheme()" aria-label="Toggle theme">🌙</button>
+    </div>
+  </div>
+
+  <div class="mission-hero">
+    <div class="m-badge-row">
+      <span class="m-ico">🔥</span>
+      <span class="m-title">30-Day Challenge</span>
+      <span class="m-badge" id="m-badge">Inactive</span>
+    </div>
+    <div class="m-day" id="m-day">— <span>/ 30</span></div>
+    <div class="m-sub" id="m-sub">Start your mission below</div>
+    <div class="m-prog-track"><div class="m-prog-fill" id="m-prog" style="width:0%"></div></div>
+    <div class="m-cd">
+      <div class="m-cd-block"><div class="m-cd-num" id="cd-d">--</div><div class="m-cd-lbl">days</div></div>
+      <div class="m-cd-sep">:</div>
+      <div class="m-cd-block"><div class="m-cd-num" id="cd-h">--</div><div class="m-cd-lbl">hrs</div></div>
+      <div class="m-cd-sep">:</div>
+      <div class="m-cd-block"><div class="m-cd-num" id="cd-m">--</div><div class="m-cd-lbl">min</div></div>
+      <div class="m-cd-sep">:</div>
+      <div class="m-cd-block"><div class="m-cd-num" id="cd-s">--</div><div class="m-cd-lbl">sec</div></div>
+    </div>
+  </div>
+
+  <div class="m-stats">
+    <div class="m-stat"><div class="m-stat-val" id="m-streak">0</div><div class="m-stat-lbl">🔥 Streak</div></div>
+    <div class="m-stat"><div class="m-stat-val" id="m-rate">0%</div><div class="m-stat-lbl">✅ Success</div></div>
+    <div class="m-stat"><div class="m-stat-val" id="m-left">30</div><div class="m-stat-lbl">📅 Left</div></div>
+  </div>
+
+  <div class="sec-h">📅 30-Day Grid</div>
+  <div class="card" style="padding:16px;">
+    <div id="mission-grid"></div>
+  </div>
+
+  <div class="sec-h">Today's Status</div>
+  <div class="card">
+    <div class="checks" id="m-checks"></div>
+    <div class="btn-row" style="margin-top:14px;">
+      <button class="btn-f" onclick="recordDay()">✅ Record Today</button>
+    </div>
+  </div>
+
+  <div class="sec-h">Rules</div>
+  <div class="card" style="padding:14px 18px;">
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="font-size:13px;font-weight:600;color:var(--on-bg);">💧 Water ≥ 3L</div>
+      <div style="font-size:13px;font-weight:600;color:var(--on-bg);">🌙 Sleep ≥ 6 hrs</div>
+      <div style="font-size:13px;font-weight:600;color:var(--on-bg);">🚫 Tambaku = 0</div>
+      <div style="font-size:13px;font-weight:600;color:var(--on-bg);">🚫 Bhang = 0</div>
+    </div>
+  </div>
+
+  <button class="fab" id="m-fab" onclick="startMissionFlow()">
+    <span class="fi">🚀</span> Start 30-Day Mission
+  </button>
+  <div class="sp"></div>
+</div>
+
+<!-- ══════════════ PAGE: WEEKLY ══════════════ -->
+<div class="page" id="page-weekly">
+  <div class="top-bar">
+    <div class="app-title">📊 <span class="accent">Weekly</span></div>
+    <div class="top-right"><div class="date-chip">7 Days</div></div>
+  </div>
+
+  <div class="sec-h">Averages</div>
+  <div class="w-grid">
+    <div class="w-tile"><div class="w-val" id="w-water">—</div><div class="w-lbl">💧 Avg Water</div></div>
+    <div class="w-tile"><div class="w-val" id="w-sleep">—</div><div class="w-lbl">🌙 Avg Sleep</div></div>
+    <div class="w-tile"><div class="w-val" id="w-tambaku">—</div><div class="w-lbl">🚬 Tambaku</div></div>
+    <div class="w-tile"><div class="w-val" id="w-score">—</div><div class="w-lbl">⭐ Avg Score</div></div>
+  </div>
+
+  <div class="sec-h">Best & Worst</div>
+  <div class="bw-grid">
+    <div class="bw-tile">
+      <div class="bw-lbl">🏆 Best</div>
+      <div class="bw-score" id="w-best-s" style="color:var(--best-color);">—</div>
+      <div class="bw-date"  id="w-best-d">—</div>
+    </div>
+    <div class="bw-tile">
+      <div class="bw-lbl">💀 Worst</div>
+      <div class="bw-score" id="w-worst-s" style="color:var(--error);">—</div>
+      <div class="bw-date"  id="w-worst-d">—</div>
+    </div>
+  </div>
+
+  <div class="sec-h">⚠️ Main Problem</div>
+  <div class="card" id="weekly-problem"></div>
+
+  <div class="sec-h">Insights</div>
+  <div id="w-insights"></div>
+
+  <div class="sec-h">📅 Week Boxes</div>
+  <div class="card" style="padding:16px;">
+    <div id="week-box-grid" class="week-grid"></div>
+    <div class="week-labels"></div>
+  </div>
+
+  <div class="sp"></div>
+</div>
+
+<!-- ══════════════ PAGE: SETTINGS ══════════════ -->
+<div class="page" id="page-settings">
+  <div class="top-bar">
+    <div class="app-title">⚙️ <span class="accent">Settings</span></div>
+    <div class="top-right">
+      <button class="theme-btn" onclick="toggleTheme()" aria-label="Toggle theme">🌙</button>
+    </div>
+  </div>
+
+  <div class="sec-h">Appearance</div>
+  <div class="setting-row">
+    <div class="setting-ico">🎨</div>
+    <div class="setting-info">
+      <div class="setting-title">Theme</div>
+      <div class="setting-sub" id="theme-sub">Dark Mode</div>
+    </div>
+    <button class="btn-t" style="padding:10px 16px;font-size:13px;flex:0 0 auto;" onclick="toggleTheme()" id="theme-btn">☀️ Light</button>
+  </div>
+
+  <div class="sec-h">Data</div>
+  <div class="setting-row">
+    <div class="setting-ico">⬇️</div>
+    <div class="setting-info">
+      <div class="setting-title">Export Backup</div>
+      <div class="setting-sub">Download all data as JSON</div>
+    </div>
+    <button class="btn-f" style="padding:10px 16px;font-size:13px;flex:0 0 auto;" onclick="exportData()">Export</button>
+  </div>
+  <div class="setting-row">
+    <div class="setting-ico">⬆️</div>
+    <div class="setting-info">
+      <div class="setting-title">Restore Backup</div>
+      <div class="setting-sub">Upload a JSON backup file</div>
+    </div>
+    <button class="btn-o" style="padding:10px 16px;font-size:13px;flex:0 0 auto;" onclick="document.getElementById('import-input').click()">Restore</button>
+  </div>
+
+  <div class="sec-h">Danger Zone</div>
+  <div class="setting-row">
+    <div class="setting-ico">🗑️</div>
+    <div class="setting-info">
+      <div class="setting-title">Clear All Data</div>
+      <div class="setting-sub">Permanently delete everything</div>
+    </div>
+    <button class="btn-e" style="padding:10px 16px;font-size:13px;flex:0 0 auto;" onclick="clearAllData()">Clear</button>
+  </div>
+
+  <div class="sec-h">About</div>
+  <div class="card" style="padding:16px 18px;">
+    <div style="font-size:13px;font-weight:700;color:var(--on-bg);margin-bottom:6px;">LifeTrack v6.0</div>
+    <div style="font-size:12px;color:var(--on-sv);line-height:1.6;">
+      Personal daily habit tracker.<br/>
+      Data stored locally — no account needed.<br/>
+      No internet required after first load.
+    </div>
+  </div>
+  <div class="sp"></div>
+</div>
+
+<!-- NAV -->
+<nav id="nav-bar">
+  <button class="nav-item active" onclick="showPage('today',this)">
+    <div class="nav-pill">📋</div><span>Today</span>
+  </button>
+  <button class="nav-item" onclick="showPage('mission',this)">
+    <div class="nav-pill">🔥</div><span>Mission</span>
+  </button>
+  <button class="nav-item" onclick="showPage('weekly',this);renderWeekly()">
+    <div class="nav-pill">📊</div><span>Weekly</span>
+  </button>
+  <button class="nav-item" onclick="showPage('settings',this)">
+    <div class="nav-pill">⚙️</div><span>Settings</span>
+  </button>
+</nav>
+
+<script>
+'use strict';
+
+/* ── UTILS ──────────────────────────────────── */
+const pad = n => String(n).padStart(2,'0');
+
+const todayKey = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+};
+
+const getLocalTime = () => {
+  const t = new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:false});
+  return t === '24:00' ? '00:00' : t;
+};
+
+const CIRC = 2 * Math.PI * 36; // matches SVG r="36"
+
+/* ── LIFEDB v1 ──────────────────────────────── */
+const LifeDB = (() => {
+  const SK='lifeDB', VK='lifeDB_version', CV=1;
+
+  const def = () => ({
+    water:0, toilet:0, sleep:0, food:[],
+    mood:'normal', energy:'normal',
+    tambaku:0, bhang:0,
+  });
+
+  const load = () => { try{ return JSON.parse(localStorage.getItem(SK))||{}; }catch{ return{}; } };
+  const save = db => localStorage.setItem(SK, JSON.stringify(db));
+
+  const migrate = () => {
+    const sv = parseInt(localStorage.getItem(VK)||'0',10);
+    if(sv >= CV) return;
+    const db = load(), r = def();
+    for(const d in db) for(const f in r) if(db[d][f]===undefined) db[d][f]=r[f];
+    save(db); localStorage.setItem(VK, String(CV));
+  };
+
+  const ensure = () => {
+    migrate();
+    const db = load(), k = todayKey();
+    if(!db[k]){ db[k]=def(); save(db); }
+    return db;
+  };
+
+  return {
+    getToday:   ()     => { const db=ensure(); return db[todayKey()]; },
+    update:     (f,v)  => { const db=ensure(),k=todayKey(); if(!(f in db[k]))return false; db[k][f]=v; save(db); return true; },
+    addFood:    (t,tp) => { const db=ensure(),k=todayKey(); db[k].food.push({time:t,type:tp}); save(db); },
+    removeFood: i      => { const db=ensure(),k=todayKey(); db[k].food.splice(i,1); save(db); },
+    resetDay:   ()     => { const db=load(); db[todayKey()]=def(); save(db); },
+    getHistory: (n=7)  => {
+      const db=load(), r=[];
+      for(let i=0;i<n;i++){
+        const d=new Date(); d.setDate(d.getDate()-i);
+        const k=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+        r.push({date:k,...(db[k]||def())});
+      }
+      return r;
+    },
+  };
+})();
+
+/* ── LIFESCORE ──────────────────────────────── */
+const LifeScore = (() => {
+  const R = [
+    {check:d=>d.water   < 3,  p:-20, r:'Low water intake' },
+    {check:d=>d.toilet  > 8,  p:-10, r:'High toilet count'},
+    {check:d=>d.sleep   < 6,  p:-15, r:'Low sleep'        },
+    {check:d=>d.tambaku > 0,  p:-20, r:'Tambaku used'     },
+    {check:d=>d.bhang   > 0,  p:-30, r:'Bhang used'       },
+    {check:d=>d.mood   ==='bad', p:-10, r:'Bad mood'       },
+    {check:d=>d.energy ==='low', p:-10, r:'Low energy'     },
+  ];
+  const grade = s => s>=90?'Excellent':s>=75?'Good':s>=55?'Average':s>=35?'Poor':'Critical';
+  const calculateScore = data => {
+    let s=100; const pen=[];
+    for(const r of R) if(r.check(data)){ s+=r.p; pen.push(r); }
+    return { score:Math.max(0,s), penalties:pen, grade:grade(Math.max(0,s)) };
+  };
+  return { calculateScore, getTodayScore:()=>calculateScore(LifeDB.getToday()) };
+})();
+
+/* ── LIFEANALYTICS ──────────────────────────── */
+const LifeAnalytics = (() => {
+  const avg = a => a.length ? a.reduce((x,y)=>x+y,0)/a.length : 0;
+  const sum = a => a.reduce((x,y)=>x+y,0);
+  const r2  = n => Math.round(n*100)/100;
+  const scored = () => LifeDB.getHistory(7).map(d=>({...d,score:LifeScore.calculateScore(d).score}));
+
+  const PAT = [
+    {check:h=>h.filter(d=>d.water<3).length>=4,       msg:'💧 Consistently under-hydrated this week.'},
+    {check:h=>h.filter(d=>d.toilet>8).length>=3,      msg:'🚽 Frequent urination pattern detected.'},
+    {check:h=>h.filter(d=>d.sleep<6).length>=4,       msg:'😴 Sleep deficiency — aim for 6+ hrs daily.'},
+    {check:h=>h.filter(d=>d.tambaku>0).length>=3,     msg:'🚬 Tambaku used on multiple days this week.'},
+    {check:h=>h.filter(d=>d.bhang>0).length>=2,       msg:'⚠️ Bhang used multiple days.'},
+    {check:h=>h.filter(d=>d.mood==='bad').length>=3,  msg:'😞 Low mood pattern — consider rest.'},
+    {check:h=>h.filter(d=>d.energy==='low').length>=3,msg:'🪫 Consistently low energy detected.'},
+    {check:h=>h.every(d=>d.tambaku===0&&d.bhang===0&&d.water>=3&&d.sleep>=6),
+      msg:'🏆 Perfect week — all habits clean!'},
+  ];
+
+  return {
+    getWeeklyReport: () => {
+      const h = scored();
+      const best  = h.reduce((b,d)=>d.score>b.score?{date:d.date,score:d.score}:b,{date:null,score:-1});
+      const worst = h.reduce((w,d)=>d.score<w.score?{date:d.date,score:d.score}:w,{date:null,score:101});
+      return {
+        averageWater:  r2(avg(h.map(d=>d.water))),
+        averageSleep:  r2(avg(h.map(d=>d.sleep))),
+        totalTambaku:  sum(h.map(d=>d.tambaku)),
+        averageScore:  r2(avg(h.map(d=>d.score))),
+        bestDay:best, worstDay:worst,
+        insights: PAT.filter(p=>p.check(h)).map(p=>p.msg),
+      };
+    },
+  };
+})();
+
+/* ── LIFEMISSION ────────────────────────────── */
+const LifeMission = (() => {
+  const K = {
+    start:'mission_startDate', streak:'mission_streak',
+    done:'mission_completedDays', fail:'mission_failedDays', last:'mission_lastChecked'
+  };
+  const sv = (k,v) => localStorage.setItem(k, JSON.stringify(v));
+  const ld = (k,fb=null) => { try{ const v=localStorage.getItem(k); return v!==null?JSON.parse(v):fb; }catch{ return fb; } };
+
+  const startMission = () => {
+    const m = new Date();
+    m.setDate(m.getDate()+1); m.setHours(0,0,0,0);
+    sv(K.start,m.toISOString()); sv(K.streak,0); sv(K.done,0); sv(K.fail,0); sv(K.last,null);
+    return { scheduledFor: m.toISOString() };
+  };
+
+  const getMissionDay = () => {
+    const s = ld(K.start); if(!s) return null;
+    const diff = Date.now() - new Date(s).getTime();
+    if(diff < 0) return 0;
+    return Math.min(Math.floor(diff/864e5)+1, 30);
+  };
+
+  const checkDailySuccess = d => d.water>=3 && d.sleep>=6 && d.tambaku===0 && d.bhang===0;
+
+  const updateMission = () => {
+    const s = ld(K.start); if(!s) return null;
+    if(new Date(s) > new Date()) return null;
+    const today = todayKey();
+    if(ld(K.last) === today) return null;
+    const ok = checkDailySuccess(LifeDB.getToday());
+    let str=ld(K.streak,0), done=ld(K.done,0), fail=ld(K.fail,0);
+    if(ok){ str++; done++; } else { str=0; fail++; }
+    sv(K.streak,str); sv(K.done,done); sv(K.fail,fail); sv(K.last,today);
+    return { success:ok, streak:str };
+  };
+
+  const getMissionStats = () => {
+    const s = ld(K.start); if(!s) return null;
+    const day=getMissionDay(), str=ld(K.streak,0), done=ld(K.done,0), fail=ld(K.fail,0);
+    const total = done+fail;
+    return {
+      day, streak:str,
+      successRate: total>0 ? Math.round((done/total)*100) : 0,
+      completedDays:done, failedDays:fail,
+      daysLeft: Math.max(0, 30-(day||0)),
+      isComplete: (day||0) >= 30,
+      startDate:s, started: new Date(s) <= new Date(),
+    };
+  };
+
+  return {
+    startMission, getMissionDay, checkDailySuccess,
+    updateMission, getMissionStats,
+    isScheduled: () => { const s=ld(K.start); return s && new Date(s)>new Date(); },
+  };
+})();
+
+/* ── LIFECOUNTDOWN ──────────────────────────── */
+const LifeCountdown = (() => {
+  let tid = null;
+
+  const getStart = () => { const s=localStorage.getItem('mission_startDate'); return s?new Date(s):null; };
+  const getEnd   = () => {
+    const s=getStart(); if(!s) return null;
+    const e=new Date(s); e.setDate(e.getDate()+30); e.setHours(23,59,59,999); return e;
+  };
+
+  const resolve = () => {
+    const now=Date.now(), start=getStart(), end=getEnd();
+    if(!start||!end) return null;
+    if(now < start.getTime()) return { state:'waiting', diff:start.getTime()-now };
+    if(now <= end.getTime())  return { state:'active',  diff:end.getTime()-now   };
+    return { state:'completed' };
+  };
+
+  const parts = diff => ({
+    days:    Math.floor(diff/864e5),
+    hours:   Math.floor(diff/36e5)%24,
+    minutes: Math.floor(diff/6e4)%60,
+    seconds: Math.floor(diff/1e3)%60,
+  });
+
+  const setEl = (id,v) => {
+    const el=document.getElementById(id);
+    if(!el||el.textContent===v) return;
+    el.style.opacity='0'; el.style.transform='translateY(-3px)';
+    requestAnimationFrame(()=>{ el.textContent=v; el.style.opacity='1'; el.style.transform='translateY(0)'; });
+  };
+
+  const tick = () => {
+    const r = resolve(); if(!r) return;
+    if(r.state === 'completed'){
+      ['cd-d','cd-h','cd-m','cd-s'].forEach(id=>setEl(id,'00'));
+      stopCountdown(); return;
+    }
+    const p = parts(r.diff);
+    setEl('cd-d', pad(p.days));
+    setEl('cd-h', pad(p.hours));
+    setEl('cd-m', pad(p.minutes));
+    setEl('cd-s', pad(p.seconds));
+  };
+
+  const stopCountdown  = () => { clearInterval(tid); tid=null; };
+  const startCountdown = () => {
+    if(tid){ clearInterval(tid); tid=null; }
+    if(!getStart()) return;
+    tid = setInterval(tick, 1000);
+    tick();
+  };
+
+  return { startCountdown, stopCountdown };
+})();
+
+/* ── THEME ──────────────────────────────────── */
+const THEME_KEY = 'lt_theme';
+
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme',t);
+  document.getElementById('theme-meta')?.setAttribute('content',t==='dark'?'#111318':'#F8F9FF');
+}
+function initTheme() {
+  const saved = localStorage.getItem(THEME_KEY);
+  const sys   = window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+  applyTheme(saved||sys);
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',e=>{
+    if(!localStorage.getItem(THEME_KEY)){ applyTheme(e.matches?'dark':'light'); updateThemeUI(); }
+  });
+}
+function toggleTheme() {
+  const next = document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';
+  applyTheme(next); localStorage.setItem(THEME_KEY,next); updateThemeUI();
+}
+function updateThemeUI() {
+  const t = document.documentElement.getAttribute('data-theme');
+  document.querySelectorAll('.theme-btn').forEach(b=>b.textContent=t==='dark'?'☀️':'🌙');
+  const sub=document.getElementById('theme-sub'); if(sub) sub.textContent=t==='dark'?'Dark Mode':'Light Mode';
+  const btn=document.getElementById('theme-btn'); if(btn) btn.textContent=t==='dark'?'☀️ Light':'🌙 Dark';
+}
+
+/* ── MOTIVATIONAL MESSAGE ───────────────────── */
+function getScoreMsg(s) {
+  if(s===100) return '🏆 Perfect day!';
+  if(s>=75)   return '💪 Solid day — keep it up!';
+  if(s>=55)   return '😐 Average — push harder';
+  if(s>=35)   return '⚠️ Rough day — bounce back!';
+  if(s>0)     return '🔥 Kal better karo bhai';
+  return '💀 Seriously ho jao — aaj zero!';
+}
+
+/* ── SCORE RING COLOR ───────────────────────── */
+function ringColor(s) {
+  if(s>=75) return '#34C759'; // green
+  if(s>=45) return '#FFD97D'; // amber
+  return 'var(--error)';      // red
+}
+
+/* ── MAIN RENDER ────────────────────────────── */
+function updateDashboard() {
+  const d = LifeDB.getToday();
+  const { score, grade, penalties } = LifeScore.getTodayScore();
+
+  // Date
+  document.getElementById('date-label').textContent =
+    new Date().toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'});
+
+  // Score ring — dynamic color
+  const fill = document.querySelector('.ring-fill');
+  fill.style.strokeDashoffset = CIRC - (score/100)*CIRC;
+  fill.style.stroke = ringColor(score);
+  document.getElementById('score-num').textContent   = score;
+  document.getElementById('score-grade').textContent = grade;
+  document.getElementById('score-msg').textContent   = getScoreMsg(score);
+
+  const pEl = document.getElementById('score-penalties');
+  pEl.innerHTML = penalties.length===0
+    ? '<span class="ok-chip">✅ All clear today!</span>'
+    : penalties.map(p=>`<span class="p-chip">${p.p} ${p.r}</span>`).join('');
+
+  // Values
+  document.getElementById('water-val').innerHTML  = `${d.water.toFixed(2)}<span class="u">L</span>`;
+  document.getElementById('toilet-val').innerHTML = `${d.toilet}<span class="u">×</span>`;
+
+  // Sleep — big display with color
+  const sleepEl = document.getElementById('sleep-display');
+  sleepEl.innerHTML = `${d.sleep||0}<span class="u">hrs</span>`;
+  sleepEl.className = 'sleep-display ' + (d.sleep>=6?'good':d.sleep>=4?'warn':'bad');
+
+  const si = document.getElementById('sleep-input');
+  if(document.activeElement !== si) si.value = d.sleep||'';
+
+  // Toggles
+  ['good','normal','bad'].forEach(m =>
+    document.getElementById('mood-'+m).classList.toggle('active', d.mood===m));
+  ['high','normal','low'].forEach(e =>
+    document.getElementById('energy-'+e).classList.toggle('active', d.energy===e));
+
+  // Addictions — green when clean, warn when used
+  ['tambaku','bhang'].forEach(f => {
+    const val  = document.getElementById(f+'-val');
+    const tile = document.getElementById(f+'-tile');
+    const clean = d[f] === 0;
+    val.textContent = d[f];
+    val.className   = 'addict-count ' + (clean ? 'clean' : 'warn');
+    tile.className  = 'addict-tile ' + (clean ? 'clean-tile' : '');
+  });
+
+  // Food + badge
+  renderFood(d.food);
+  const badge = document.getElementById('food-badge');
+  if(d.food && d.food.length > 0){
+    badge.textContent = d.food.length + ' meals';
+    badge.style.display = 'inline';
+  } else {
+    badge.style.display = 'none';
+  }
+
+  // Mission checks sync
+  renderMissionChecks(d);
+}
+
+/* ── FOOD ───────────────────────────────────── */
+function renderFood(food) {
+  const el = document.getElementById('food-list');
+  if(!food||food.length===0){ el.innerHTML='<div class="food-empty">No meals logged yet</div>'; return; }
+  el.innerHTML = food.map((f,i)=>`
+    <div class="food-item">
+      <span class="food-time">${f.time||'--:--'}</span>
+      <span class="food-type ${f.type}">${f.type==='home'?'🏠 Home':'🌍 Outside'}</span>
+      <button class="food-del" onclick="delFood(${i})">✕</button>
+    </div>`).join('');
+}
+function logFood(type) {
+  const ti = document.getElementById('food-time');
+  LifeDB.addFood(ti.value||getLocalTime(), type);
+  ti.value=''; updateDashboard();
+  snack(type==='home'?'🏠 Home meal logged':'🌍 Outside meal logged');
+}
+function delFood(i){ LifeDB.removeFood(i); updateDashboard(); }
+
+/* ── ACTIONS ────────────────────────────────── */
+function addWater(a) {
+  const n = Math.max(0, Math.round((LifeDB.getToday().water+a)*100)/100);
+  LifeDB.update('water',n); updateDashboard();
+  if(a>0) snack(`💧 +${a>=1?a+'L':a*1000+'ml'}`);
+}
+function addToilet(a){ LifeDB.update('toilet',Math.max(0,LifeDB.getToday().toilet+a)); updateDashboard(); }
+function changeSleep(a){
+  const n = Math.min(24,Math.max(0,Math.round((LifeDB.getToday().sleep+a)*10)/10));
+  LifeDB.update('sleep',n); updateDashboard();
+}
+function setMood(v)  { LifeDB.update('mood',v);   updateDashboard(); snack('Mood updated'); }
+function setEnergy(v){ LifeDB.update('energy',v); updateDashboard(); snack('Energy updated'); }
+function addAddiction(f,a){ LifeDB.update(f,Math.max(0,LifeDB.getToday()[f]+a)); updateDashboard(); }
+function resetDay(){
+  if(confirm("Reset today's data?")){ LifeDB.resetDay(); updateDashboard(); snack('↺ Today reset'); }
+}
+document.getElementById('sleep-input').addEventListener('change', e => {
+  const v = parseFloat(e.target.value);
+  if(!isNaN(v)){ LifeDB.update('sleep',Math.min(24,Math.max(0,v))); updateDashboard(); }
+});
+
+/* ── REMINDERS ──────────────────────────────── */
+setInterval(()=>{
+  const d=LifeDB.getToday(), h=new Date().getHours();
+  if(d.water<1.5&&h>=8&&h<23) snack(`💧 Pani pee le — sirf ${d.water.toFixed(1)}L`);
+  if(d.sleep===0&&h>=22) setTimeout(()=>snack('🌙 Neend kitni hui? Sleep log kar'),3000);
+},3600000);
+
+/* ── MISSION GRID ───────────────────────────── */
+function getDayStatus(dayNum, startDate) {
+  const start=new Date(startDate), dayDate=new Date(start);
+  dayDate.setDate(dayDate.getDate()+dayNum-1); dayDate.setHours(0,0,0,0);
+  const todayMid=new Date(); todayMid.setHours(0,0,0,0);
+  if(dayDate>todayMid) return 'future';
+  const k=`${dayDate.getFullYear()}-${pad(dayDate.getMonth()+1)}-${pad(dayDate.getDate())}`;
+  const data=(JSON.parse(localStorage.getItem('lifeDB')||'{}'))[k];
+  if(!data) return 'fail';
+  return (data.water>=3&&data.sleep>=6&&data.tambaku===0&&data.bhang===0)?'success':'fail';
+}
+function getGridDay(s){ const now=Date.now(),start=new Date(s).getTime(); if(now<start)return 0; return Math.min(Math.floor((now-start)/864e5)+1,30); }
+
+function renderMissionGrid() {
+  const el=document.getElementById('mission-grid'); if(!el) return;
+  const s=localStorage.getItem('mission_startDate');
+  if(!s){ el.innerHTML=Array.from({length:30},(_,i)=>`<div class="mg-box future" onclick="mgClick(${i+1},'future')">${i+1}</div>`).join(''); return; }
+  const cur=getGridDay(s);
+  el.innerHTML=Array.from({length:30},(_,i)=>{
+    const day=i+1, status=getDayStatus(day,s), isToday=day===cur;
+    const delay=status==='success'?`animation-delay:${day*40}ms`:'';
+    const inner=status==='success'?'✓':status==='fail'?'✕':day;
+    return `<div class="mg-box ${status}${isToday?' today':''}" style="${delay}" onclick="mgClick(${day},'${status}')">${inner}</div>`;
+  }).join('');
+}
+function mgClick(day,status){ snack({success:`Day ${day} → ✅ Success!`,fail:`Day ${day} → ❌ Failed`,future:`Day ${day} → ⏳ Not yet`}[status]||`Day ${day}`); }
+
+/* ── WEEK BOXES ─────────────────────────────── */
+function renderWeekBoxes() {
+  const el=document.getElementById('week-box-grid'); if(!el) return;
+  const data=LifeDB.getHistory(7).reverse();
+  el.innerHTML=data.map((d,i)=>{
+    const has=d.water||d.sleep||d.tambaku||d.bhang;
+    const ok=d.water>=3&&d.sleep>=6&&d.tambaku===0&&d.bhang===0;
+    const isToday=i===data.length-1;
+    let cls='future',sym='—';
+    if(has){ cls=ok?'success':'fail'; sym=ok?'✓':'✕'; }
+    const delay=cls==='success'?`animation-delay:${i*60}ms`:'';
+    return `<div class="mg-box ${cls}${isToday?' today':''}" style="${delay}" title="${d.date}">${sym}</div>`;
+  }).join('');
+  renderWeekLabels(data);
+}
+function renderWeekLabels(data) {
+  const el=document.querySelector('.week-labels'); if(!el) return;
+  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const src=data||LifeDB.getHistory(7).reverse();
+  el.innerHTML=src.map(d=>`<div>${days[new Date(d.date).getDay()]}</div>`).join('');
+}
+
+/* ── MISSION ────────────────────────────────── */
+function renderMissionChecks(data) {
+  const d=data||LifeDB.getToday(), el=document.getElementById('m-checks'); if(!el) return;
+  el.innerHTML=[
+    {ico:'💧',lbl:`Water ${d.water.toFixed(1)}L / 3L`,ok:d.water>=3},
+    {ico:'🌙',lbl:`Sleep ${d.sleep}h / 6h`,ok:d.sleep>=6},
+    {ico:'🚫',lbl:`Tambaku: ${d.tambaku===0?'Clean':d.tambaku}`,ok:d.tambaku===0},
+    {ico:'🚫',lbl:`Bhang: ${d.bhang===0?'Clean':d.bhang}`,ok:d.bhang===0},
+  ].map(r=>`<div class="check-row"><span class="ck-ico">${r.ico}</span><span class="ck-lbl">${r.lbl}</span><span class="ck-st ${r.ok?'pass':'fail'}">${r.ok?'✅ Pass':'❌ Fail'}</span></div>`).join('');
+}
+
+function renderMission() {
+  const stats=LifeMission.getMissionStats();
+  const badge=document.getElementById('m-badge'), fab=document.getElementById('m-fab');
+  if(!stats){
+    badge.textContent='Inactive'; badge.className='m-badge';
+    document.getElementById('m-day').innerHTML='— <span>/ 30</span>';
+    document.getElementById('m-sub').textContent='Start your mission below';
+    document.getElementById('m-prog').style.width='0%';
+    ['m-streak','m-left'].forEach(id=>document.getElementById(id).textContent=id==='m-left'?'30':'0');
+    document.getElementById('m-rate').textContent='0%';
+    fab.style.display='flex'; renderMissionGrid(); return;
+  }
+  const{day,streak,successRate,daysLeft,isComplete}=stats;
+  if(LifeMission.isScheduled()){badge.textContent='Starts Tonight';badge.className='m-badge wb';fab.style.display='none';}
+  else if(isComplete){badge.textContent='Complete 🎉';badge.className='m-badge db';document.getElementById('m-prog').classList.add('done');fab.style.display='flex';fab.innerHTML='<span class="fi">🔄</span> Start New Mission';}
+  else{badge.textContent='Active';badge.className='m-badge ab';fab.style.display='none';}
+  document.getElementById('m-day').innerHTML=`${day||'—'} <span>/ 30</span>`;
+  document.getElementById('m-sub').textContent=isComplete?'Mission accomplished! 🏆':`${daysLeft} days remaining`;
+  document.getElementById('m-prog').style.width=`${((day||0)/30)*100}%`;
+  document.getElementById('m-streak').textContent=streak;
+  document.getElementById('m-rate').textContent=successRate+'%';
+  document.getElementById('m-left').textContent=daysLeft;
+  renderMissionChecks(); renderMissionGrid();
+}
+
+let _missionStarting=false;
+function startMissionFlow() {
+  if(_missionStarting) return; _missionStarting=true;
+  LifeMission.startMission();
+  LifeCountdown.stopCountdown(); LifeCountdown.startCountdown();
+  renderMission(); snack('🚀 Mission starts at midnight!');
+  setTimeout(()=>_missionStarting=false,2000);
+}
+function recordDay() {
+  const r=LifeMission.updateMission();
+  if(r===null){snack('Already recorded or mission not active');return;}
+  snack(r.success?`✅ Success! Streak: ${r.streak} 🔥`:'❌ Today failed — keep going!');
+  renderMission();
+}
+
+/* ── WEEKLY PROBLEM ─────────────────────────── */
+function renderWeeklyProblem() {
+  const el=document.getElementById('weekly-problem'); if(!el) return;
+  const r=LifeAnalytics.getWeeklyReport();
+  el.innerHTML=r.insights.length
+    ?`<div style="font-size:14px;font-weight:700;color:var(--on-bg);">${r.insights[0]}</div>`
+    :`<div style="font-size:14px;font-weight:700;color:var(--check-pass);">🔥 Perfect week — no major issues!</div>`;
+}
+
+/* ── WEEKLY ─────────────────────────────────── */
+function renderWeekly() {
+  const r=LifeAnalytics.getWeeklyReport();
+  document.getElementById('w-water').textContent   = r.averageWater+'L';
+  document.getElementById('w-sleep').textContent   = r.averageSleep+'h';
+  document.getElementById('w-tambaku').textContent = r.totalTambaku;
+  document.getElementById('w-score').textContent   = r.averageScore;
+  document.getElementById('w-best-s').textContent  = r.bestDay.score??'—';
+  document.getElementById('w-best-d').textContent  = r.bestDay.date??'—';
+  document.getElementById('w-worst-s').textContent = r.worstDay.score??'—';
+  document.getElementById('w-worst-d').textContent = r.worstDay.date??'—';
+  document.getElementById('w-insights').innerHTML  = r.insights.length
+    ?r.insights.map(i=>`<div class="insight">${i}</div>`).join('')
+    :'<div class="insight" style="color:var(--outline)">Keep tracking to see patterns.</div>';
+  renderWeeklyProblem();
+  renderWeekBoxes();
+}
+
+/* ── BACKUP ─────────────────────────────────── */
+function exportData() {
+  const raw=localStorage.getItem('lifeDB'); if(!raw){snack('❌ Koi data nahi mila');return;}
+  const d=new Date();
+  const backup={version:localStorage.getItem('lifeDB_version')||'1',exportedAt:d.toISOString(),lifeDB:JSON.parse(raw),mission:{startDate:localStorage.getItem('mission_startDate'),streak:localStorage.getItem('mission_streak'),completedDays:localStorage.getItem('mission_completedDays'),failedDays:localStorage.getItem('mission_failedDays'),lastChecked:localStorage.getItem('mission_lastChecked')}};
+  const url=URL.createObjectURL(new Blob([JSON.stringify(backup,null,2)],{type:'application/json'}));
+  const a=document.createElement('a');
+  a.href=url; a.download=`life-track-backup-${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}.json`; a.click();
+  URL.revokeObjectURL(url); snack('✅ Backup download ho gaya!');
+}
+function importData(file) {
+  if(!file) return;
+  if(!file.name.endsWith('.json')&&file.type!=='application/json'){snack('❌ Sirf .json file upload karo');return;}
+  const reader=new FileReader();
+  reader.onload=e=>{
+    let b; try{b=JSON.parse(e.target.result);}catch{snack('❌ File corrupt hai');return;}
+    if(!b||!b.lifeDB){snack('❌ Invalid backup file');return;}
+    const days=Object.keys(b.lifeDB).length;
+    if(!confirm(`Backup mein ${days} din ka data mila.\n\nKya existing data replace karna hai?\nYeh action undo nahi hoga.`))return;
+    localStorage.setItem('lifeDB',JSON.stringify(b.lifeDB));
+    localStorage.setItem('lifeDB_version',b.version||'1');
+    if(b.mission){const m=b.mission;if(m.startDate)localStorage.setItem('mission_startDate',m.startDate);if(m.streak)localStorage.setItem('mission_streak',m.streak);if(m.completedDays)localStorage.setItem('mission_completedDays',m.completedDays);if(m.failedDays)localStorage.setItem('mission_failedDays',m.failedDays);if(m.lastChecked)localStorage.setItem('mission_lastChecked',m.lastChecked);}
+    snack('✅ Restore complete! Reloading...'); setTimeout(()=>location.reload(),1500);
+  };
+  reader.onerror=()=>snack('❌ File read nahi ho paya');
+  reader.readAsText(file);
+}
+function clearAllData(){ if(!confirm('Sab kuch permanently delete ho jayega.\nKya pakka karna hai?'))return; localStorage.clear(); snack('🗑️ Sab data delete ho gaya'); setTimeout(()=>location.reload(),1500); }
+
+/* ── UI HELPERS ─────────────────────────────── */
+let _st;
+function snack(msg){ const el=document.getElementById('snack'); el.textContent=msg; el.classList.add('show'); clearTimeout(_st); _st=setTimeout(()=>el.classList.remove('show'),2800); }
+function showPage(name,btn){ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active')); document.getElementById('page-'+name).classList.add('active'); btn.classList.add('active'); }
+
+/* ── PWA INSTALL ────────────────────────────── */
+let _installPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{ e.preventDefault(); _installPrompt=e; document.getElementById('install-bar').style.display='flex'; });
+function installApp(){ if(!_installPrompt)return; _installPrompt.prompt(); _installPrompt.userChoice.then(r=>{ if(r.outcome==='accepted')snack('✅ App installed!'); _installPrompt=null; dismissInstall(); }); }
+function dismissInstall(){ document.getElementById('install-bar').style.display='none'; }
+window.addEventListener('appinstalled',()=>{ dismissInstall(); snack('🎉 LifeTrack installed!'); _installPrompt=null; });
+
+/* ── SERVICE WORKER ─────────────────────────── */
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg=>{
+        console.log('LifeTrack SW ✅',reg.scope);
+        reg.addEventListener('updatefound',()=>{
+          const sw=reg.installing;
+          sw.addEventListener('statechange',()=>{
+            if(sw.state==='installed'&&navigator.serviceWorker.controller){
+              snack('🔄 Update available — restarting...');
+              setTimeout(()=>{ sw.postMessage('SKIP_WAITING'); window.location.reload(); },3000);
+            }
+          });
+        });
+      })
+      .catch(err=>console.error('SW failed:',err));
+  });
+}
+
+/* ── BOOT ───────────────────────────────────── */
+initTheme();
+updateThemeUI();
+if(localStorage.getItem('mission_startDate')) LifeCountdown.startCountdown();
+updateDashboard();
+renderMission();
+</script>
+</body>
+</html>
